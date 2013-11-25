@@ -1,3 +1,4 @@
+// Package collection provides common operations on generic containers.
 package collection
 
 import (
