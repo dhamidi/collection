@@ -1,0 +1,144 @@
+* Description
+
+A generic collection library for Go.
+
+Dealing with generic containers in Go is not straightforward, due to
+Go's type system.  Go provides no builtin implementation for common list
+operations, such as =map=, =reduce= and =filter=.  This library aims to
+provide a generic implementation of these functions for Go programs,
+without using Go's reflection mechanism.  Type assertions are only
+necessary in the code using the library.
+
+Currently, a wrapper (=Vector=) around Go's builtin slice type is
+provided as an example implementation of the =Collection= interface.
+Your own data structures can be made compatible with the functions
+presented here by implementing the =Collection= interface.
+
+* Usage
+
+Either implement =Collection= for your own types or use the =Vector=
+implementation provided by this library.  The following example shows
+=Map=, =Reduce= and =Filter= in action, using =Vector=:
+
+#+BEGIN_SRC go
+  package main
+
+  import (
+          c "github.com/dhamidi/collection"
+          "fmt"
+  )
+
+  func main() {
+          incr := func(i c.Value) c.Value {
+                  return i.(int) + 1
+          }
+          add := func(a, b c.Value) c.Value {
+                  return a.(int) + b.(int)
+          }
+          even := func(a c.Value) bool {
+                  return a.(int) % 2 == 0
+          }
+
+          vector := c.NewVector([]c.Value{1,2,3})
+          sumOfEvens := c.Reduce(c.Filter(c.Map(vector,incr), even), add, 0)
+
+          fmt.Printf("Sum: %d\n", c.Reduce(c.Map(vector, incr), add, 0))
+          fmt.Printf("Sum of even elements: %d\n", sumOfEvens)
+          // Output:
+          // Sum: 9
+          // Sum of even elements: 6
+  }
+#+END_SRC
+
+* Contributing
+
+Contributions are welcome, as long as your contribution's code fulfills
+a few requirements:
+
+1. Write a test for each public function or method.
+2. Each public function/method/type has to be documented in way
+   compatible with =godoc=. See
+   http://blog.golang.org/godoc-documenting-go-code for how to do this.
+
+   Bonus points for providing [[http://golang.org/pkg/testing][an Example]] for the function.
+3. Functions that modify the collection passed as an argument should end
+   with `X' (e.g. `MapX' for a destructive map function).
+4. Type assertions should only be necessary in the program using this
+   library.  We can't and should not determine the correct type of an
+   element.
+5. Use GNU style `quotes' in your documentation.
+6. Add two spaces after each sentence.  This way everybody can use their
+   favorite editor's shortcuts for moving by sentences. (=(= and =)= in
+   VIM, =M-a= and =M-e= in Emacs).
+7. Write code in paragraphs.  This makes it possible to use paragraph
+   motion commands to efficiently navigate within a function.
+   Paragraphs should be delimited by the intent of the code.  To use an
+   example from the library:
+
+   #+BEGIN_SRC go
+   func NewVector(items []Value) *Vector {
+ 	data := items
+
+ 	if items == nil {
+ 		data = make([]Value, 0)
+ 	}
+
+ 	return &Vector{data: data}
+   }
+   #+END_SRC
+
+   The first paragraph describes the function and deals with handling the
+   function's arguments.  The second paragraph deals with the special
+   case of =items= being nil.  The last paragraph is about the value
+   returned by the function.
+
+The rules dealing with `code style' may seem a little overly pedantic,
+but ensure that the codebase is consistent and easy to navigate.
+
+
+* Todo
+
+- [ ] break =Collection= down into smaller interfaces, e.g. (=Collection=
+  and =ImmutableCollection=).  This way, integrating custom data
+  structures is less effort.
+
+- [ ] supply different collection implementations for Go's =map= data structure.
+  Maybe one for representing the keys, one for the values and one for a
+  list of key, value pairs?
+
+- [ ] supply an implementation for the standard library's =container/list=.
+
+- [ ] add more functions interacting with the collections, such as
+  =take=, =first=, =rest=, =foldr= and =sort=.
+
+* License
+Copyright (c) Dario Hamidi
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+3. Neither the name of the Author nor the names of its contributors
+   may be used to endorse or promote products derived from this software
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGE.
+
+* Author
+Dario Hamidi <dario.hamidi@gmail.com>, 2013
+http://www.github.com/dhamidi/collection
