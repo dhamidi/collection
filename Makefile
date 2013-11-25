@@ -1,17 +1,10 @@
 SRC ?= $(wildcard *.go)
 
-build: tmp/build
+test: $(SRC)
+	go test
 
-.PHONY: doc
-
-test: tmp/test
-
-tmp/build: $(SRC)
+build: $(SRC)
 	go build
-	touch $@
 
-doc:
-	@godoc -ex github.com/dhamidi/collection
-
-tmp/test: $(SRC)
-	go test > $@
+view-doc:
+	@godoc -ex github.com/dhamidi/collection | less
