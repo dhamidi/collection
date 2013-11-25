@@ -127,7 +127,6 @@ func (self *Vector) Empty() Collection {
 	return NewVector(make([]Value, 0, self.Length()))
 }
 
-
 // Map determines the length of the collection `c' exactly once and then
 // iterates over the range [0, length).
 //
@@ -188,7 +187,6 @@ func ReduceFirst(c Collection, f BinaryFunction) Value {
 
 	return result
 }
-
 
 // Filter returns a new collection containing only the elements of `c'
 // for which `p' returns `true'.
