@@ -4,36 +4,32 @@ import (
 	"fmt"
 )
 
-type Collection interface {
-	Item(index int) interface{}
-	SetItem(index int, value interface{}) interface{}
-	Length() int
-	Append(item interface{}) Collection
-}
-
-type Vector struct {
-	data []interface{}
-}
-
 type Value interface{}
-type UnaryFunction func (Value) Value
-type UnaryPredicate func (interface{}) bool
-type BinaryFunction func (Value, Value) Value
+type UnaryFunction func(Value) Value
+type UnaryPredicate func(Value) bool
+type BinaryFunction func(Value, Value) Value
 
-func NewVector(items []interface{}) *Vector {
+type Collection interface {
+	Item(index int) Value
+	SetItem(index int, value Value) Value
+	Length() int
+	Append(item Value) Collection
+}
+
+type Vector []Value
+
+func NewVector(items []Value) Vector {
 	data := items
 
 	if items == nil {
-		data = []interface{}{}
+		data = []Value{}
 	}
 
-	return &Vector{
-		data: data,
-	}
+	return data
 }
 
-func NewVectorInt(items []int) *Vector {
-	result := &Vector{data: []interface{}{}}
+func NewVectorInt(items []int) Vector {
+	result := Vector{}
 
 	if items == nil {
 		return result
@@ -46,26 +42,26 @@ func NewVectorInt(items []int) *Vector {
 	return result
 }
 
-func (self *Vector) String() string {
-	return fmt.Sprintf("%v", self.data)
+func (self Vector) String() string {
+	return fmt.Sprintf("%v", self)
 }
 
-func (self *Vector) Length() int {
-	return len(self.data)
+func (self Vector) Length() int {
+	return len(self)
 }
 
-func (self *Vector) Item(index int) interface{} {
-	return self.data[index]
+func (self Vector) Item(index int) Value {
+	return self[index]
 }
 
-func (self *Vector) SetItem(index int, value interface{}) interface{} {
+func (self Vector) SetItem(index int, value Value) Value {
 	oldValue := self.Item(index)
-	self.data[index] = value
+	self[index] = value
 	return oldValue
 }
 
-func (self *Vector) Append(item interface{}) Collection {
-	self.data = append(self.data, item)
+func (self Vector) Append(item Value) Collection {
+	self = append(self, item)
 	return self
 }
 
@@ -90,7 +86,7 @@ func MapX(c Collection, f UnaryFunction) Collection {
 	return c
 }
 
-func Reduce(c Collection, f BinaryFunction) interface{} {
+func Reduce(c Collection, f BinaryFunction) Value {
 	result := c.Item(0)
 	len := c.Length()
 	for index := 1; index < len; index++ {
@@ -102,7 +98,7 @@ func Reduce(c Collection, f BinaryFunction) interface{} {
 func Filter(c Collection, p UnaryPredicate) Collection {
 	result := NewVector(nil)
 	len := c.Length()
-	var item interface{}
+	var item Value
 
 	for index := 0; index < len; index++ {
 		item = c.Item(index)
