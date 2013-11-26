@@ -47,9 +47,7 @@ type Collection interface {
 }
 
 // Vector is a collection based on Go's builtin slice type.
-type Vector struct {
-	data []Value
-}
+type Vector []Value
 
 // NewVector creates a new vector initially containing the elements
 // passed in `items'.
@@ -57,21 +55,20 @@ type Vector struct {
 // The value of `items' may be `nil', in which case a new slice of
 // length 0 is allocated and used instead.
 func NewVector(items []Value) *Vector {
-	data := items
+	data := Vector(items)
 
 	if items == nil {
-		data = make([]Value, 0)
+		data = Vector(make([]Value, 0))
 	}
 
-	return &Vector{data: data}
+	return &data
 }
 
 // NewVectorInt works like NewVector, except that it accepts a slice of
 // `int'.  The resulting vector is built using `Append'.
 func NewVectorInt(items []int) *Vector {
-	result := &Vector{
-		data: make([]Value, 0),
-	}
+	data := Vector(make([]Value, 0))
+	result := &data
 
 	if items == nil {
 		return result
@@ -87,20 +84,20 @@ func NewVectorInt(items []int) *Vector {
 // String returns the string representation of a vector.  This matches
 // Go's `v' format specifier of the underlying slice.
 func (self *Vector) String() string {
-	return fmt.Sprintf("%v", self.data)
+	return fmt.Sprintf("%v", *self)
 }
 
 // Length returns the length of the vector.  This is equal to calling
 // Go's built-in `len' function on the underlying slice.
 func (self *Vector) Length() int {
-	return len(self.data)
+	return len(*self)
 }
 
 // Item returns the element located at position `index'.  This is equal
 // to indexing the underlying slice using brackets.  If the index is out
 // of bounds, this function panics.
 func (self *Vector) Item(index int) Value {
-	return self.data[index]
+	return (*self)[index]
 }
 
 // SetItem sets the element at position `index' to `value' and returns
@@ -108,7 +105,7 @@ func (self *Vector) Item(index int) Value {
 func (self *Vector) SetItem(index int, value Value) Value {
 	oldValue := self.Item(index)
 
-	self.data[index] = value
+	(*self)[index] = value
 
 	return oldValue
 }
@@ -116,7 +113,7 @@ func (self *Vector) SetItem(index int, value Value) Value {
 // Append appends `item' to the end of the underlying slice and returns
 // the method receiver.
 func (self *Vector) Append(item Value) Collection {
-	self.data = append(self.data, item)
+	*self = append(*self, item)
 
 	return self
 }
