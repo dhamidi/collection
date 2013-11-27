@@ -41,7 +41,7 @@ type BinaryFunction func(Value, Value) Value
 type Collection interface {
 	Item(index int) Value
 	SetItem(index int, value Value) Value
-	Length() int
+	Len() int
 	Append(item Value) Collection
 	Empty() Collection
 }
@@ -72,7 +72,7 @@ func (self *Vector) String() string {
 
 // Length returns the length of the vector.  This is equal to calling
 // Go's built-in `len' function on the underlying slice.
-func (self *Vector) Length() int {
+func (self *Vector) Len() int {
 	return len(*self)
 }
 
@@ -104,7 +104,7 @@ func (self *Vector) Append(item Value) Collection {
 // Empty returns a new, empty vector.  The capacity of the vector is
 // initialized to the `Length' of the method receiver.
 func (self *Vector) Empty() Collection {
-	return NewVector(make([]Value, 0, self.Length()))
+	return NewVector(make([]Value, 0, self.Len()))
 }
 
 // Map determines the length of the collection `c' exactly once and then
@@ -114,7 +114,7 @@ func (self *Vector) Empty() Collection {
 // to each element in that range of the original collection.
 func Map(c Collection, f UnaryFunction) Collection {
 	results := c.Empty()
-	len := c.Length()
+	len := c.Len()
 
 	for index := 0; index < len; index++ {
 		results.Append(f(c.Item(index)))
@@ -126,7 +126,7 @@ func Map(c Collection, f UnaryFunction) Collection {
 // MapX works like `Map', except that it modifies and returns the
 // original collection (`c').
 func MapX(c Collection, f UnaryFunction) Collection {
-	len := c.Length()
+	len := c.Len()
 
 	for index := 0; index < len; index++ {
 		item := c.Item(index)
@@ -146,7 +146,7 @@ func MapX(c Collection, f UnaryFunction) Collection {
 // collection.
 func Reduce(c Collection, f BinaryFunction, initial Value) Value {
 	result := initial
-	len := c.Length()
+	len := c.Len()
 
 	for index := 0; index < len; index++ {
 		result = f(result, c.Item(index))
@@ -159,7 +159,7 @@ func Reduce(c Collection, f BinaryFunction, initial Value) Value {
 // element of the collection as the initial value.
 func ReduceFirst(c Collection, f BinaryFunction) Value {
 	result := c.Item(0)
-	len := c.Length()
+	len := c.Len()
 
 	for index := 1; index < len; index++ {
 		result = f(result, c.Item(index))
@@ -172,7 +172,7 @@ func ReduceFirst(c Collection, f BinaryFunction) Value {
 // for which `p' returns `true'.
 func Filter(c Collection, p UnaryPredicate) Collection {
 	result := c.Empty()
-	len := c.Length()
+	len := c.Len()
 	var item Value
 
 	for index := 0; index < len; index++ {

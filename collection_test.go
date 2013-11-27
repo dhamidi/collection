@@ -23,8 +23,8 @@ func isEvenInt(a Value) bool {
 func TestVector_Length(t *testing.T) {
 	v := NewVector([]Value{1, 2, 3})
 
-	if length := v.Length(); length != 3 {
-		t.Errorf("Expected vector.Length() to be %d, got %d", 3, length)
+	if length := v.Len(); length != 3 {
+		t.Errorf("Expected vector.Len() to be %d, got %d", 3, length)
 	}
 }
 
@@ -32,7 +32,7 @@ func TestVector_Append(t *testing.T) {
 	v := NewVector(nil)
 	v.Append(1)
 
-	if length := v.Length(); length != 1 {
+	if length := v.Len(); length != 1 {
 		t.Errorf("Expected vector.Append(1) to increase length by one")
 	}
 
@@ -44,7 +44,7 @@ func TestVector_Append(t *testing.T) {
 func TestVector_Item(t *testing.T) {
 	v := NewVector([]Value{1, 2, 3})
 
-	length := v.Length()
+	length := v.Len()
 	for index := 0; index < length; index++ {
 		if item := v.Item(index); item.(int) != index+1 {
 			t.Errorf("Expected vector.Item(%d) to be %d, got %v", index, index+1, item)
@@ -73,7 +73,7 @@ func TestVector_String(t *testing.T) {
 func TestMap(t *testing.T) {
 	v := NewVector([]Value{1, 2, 3})
 	mv := Map(v, doubleInt)
-	len := v.Length()
+	len := v.Len()
 
 	for index := 0; index < len; index++ {
 		if mv.Item(index) != 2*v.Item(index).(int) {
@@ -95,7 +95,7 @@ func ExampleMap() {
 func TestMapX(t *testing.T) {
 	v := NewVector([]Value{1, 2, 3})
 	mv := MapX(v, doubleInt)
-	len := v.Length()
+	len := v.Len()
 
 	for index := 0; index < len; index++ {
 		if actual, expected := mv.Item(index), v.Item(index); actual != expected {
@@ -164,8 +164,8 @@ func TestFilter(t *testing.T) {
 		t.Errorf("Expected filtered.Item(0) to be %v, got %v", expected, actual)
 	}
 
-	if actual, expected := filtered.Length(), 1; actual != expected {
-		t.Errorf("Expected filtered.Length() to be %v, got %v", expected, actual)
+	if actual, expected := filtered.Len(), 1; actual != expected {
+		t.Errorf("Expected filtered.Len() to be %v, got %v", expected, actual)
 	}
 }
 
