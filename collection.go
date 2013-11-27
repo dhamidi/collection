@@ -64,23 +64,6 @@ func NewVector(items []Value) *Vector {
 	return &data
 }
 
-// NewVectorInt works like NewVector, except that it accepts a slice of
-// `int'.  The resulting vector is built using `Append'.
-func NewVectorInt(items []int) *Vector {
-	data := Vector(make([]Value, 0))
-	result := &data
-
-	if items == nil {
-		return result
-	}
-
-	for _, item := range items {
-		result.Append(item)
-	}
-
-	return result
-}
-
 // String returns the string representation of a vector.  This matches
 // Go's `v' format specifier of the underlying slice.
 func (self *Vector) String() string {
